@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+
+import { Route, Switch } from "react-router-dom";
+import MobileNavbar from "./components/MobileNavbar";
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
+import { useLocationChange } from "./hooks/use-location-change";
+import Channel from "./pages/Channel";
+import History from "./pages/History";
+import Home from "./pages/Home";
+import Library from "./pages/Library";
+import LikedVideos from "./pages/LikedVideos";
+import NotFound from "./pages/NotFound";
+import SearchResults from "./pages/SearchResults";
+import Subscriptions from "./pages/Subscriptions";
+import Trending from "./pages/Trending";
+import WatchVideo from "./pages/WatchVideo";
+import YourVideos from "./pages/YourVideos";
+import Container from "./styles/Container";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isSidebarOpen, setSidebarOpen] = React.useState(false);
+  const handleCloseSidebar = () => setSidebarOpen(false);
+  const toggleSidebarOpen = () => setSidebarOpen(!isSidebarOpen);
+  useLocationChange(handleCloseSidebar);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Navbar toggleSidebarOpen={toggleSidebarOpen} />
+      <Sidebar isSidebarOpen={isSidebarOpen} />
+      <MobileNavbar />
+      <Container>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/watch/:videoId" component={WatchVideo} />
+          <Route path="/channel/:channelId" component={Channel} />
+          <Route path="/results/:searchQuery" component={SearchResults} />
+          <Route path="/feed/trending" component={Trending} />
+          <Route path="/feed/subscriptions" component={Subscriptions} />
+          <Route path="/feed/library" component={Library} />
+          <Route path="/feed/history" component={History} />
+          <Route path="/feed/my_videos" component={YourVideos} />
+          <Route path="/feed/liked_videos" component={LikedVideos} />
+          <Route path="*" component={NotFound} />
+        </Switch>
+      </Container>
     </>
-  )
+  );
 }
-
-export default App
